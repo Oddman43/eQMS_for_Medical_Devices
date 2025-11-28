@@ -1,6 +1,19 @@
 # MediQMS
 
-<img src="data/images/mediqms_logo.png" alt="Logo" width="200" />
+
+<img src="data/images/mediqms_logo.png" alt="Logo" width="150" />
+
+Quality Managment System for Medical Devices from scratch
+
+## Table of Contents
+🚧 Working on 🚧:
+
+- [Document Control](#document-control)
+
+Future modules:
+
+- CAPA Managment 
+
 
 ## Document Control
 
