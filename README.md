@@ -56,7 +56,7 @@ The organization shall:
 - The records shall remain legible and stored to prevent loss or deterioration.
 - Keep the records for the expected life cycle of the device, at least two years from comercial distribution.
 
-### Diferences:
+### Comparaison:
 
 Regarding to document control, both aplicable regulations are very similar since both require:
 
