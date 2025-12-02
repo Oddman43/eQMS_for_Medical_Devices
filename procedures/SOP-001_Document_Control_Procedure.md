@@ -55,7 +55,7 @@ The QMS utilizes a lifecycle approach to document management. The Electronic QMS
 | **DRAFT**              | Document is being created or revised. Content is not final.                                                                           | **Edit:** Owner. **Read:** Owner, Approvers         |
 | **IN REVIEW**          | Document is locked for editing and is undergoing technical and quality review.                                                        | **Edit:** None (Comments only). **Read:** Reviewers |
 | **APPROVED - PENDING** | Document is signed and approved but strictly waiting for the Effective Date or completion of training. Not valid for operational use. | **Edit:** None. **Read:** Training Mgr, QA          |
-| **RELEASED (Current)** | The official, effective version of the document to be used for QMS activities.                                                        | **Edit:** None. **Read:** All Employees             |
+| **RELEASED**           | The official, effective version of the document to be used for QMS activities.                                                        | **Edit:** None. **Read:** All Employees             |
 | **SUPERSEDED**         | A previous version of a document that has been replaced by a newer released version. Retained for historical traceability.            | **Edit:** None. **Read:** QA/Admin only             |
 | **OBSOLETE**           | The document has been withdrawn from use entirely and is no longer applicable to the QMS.                                             | **Edit:** None. **Read:** QA/Admin only             |
 
@@ -156,6 +156,3 @@ To ensure compliance with 21 CFR Part 11, the Python/SQL system includes:
 - Security: User sessions time out after inactivity. Passwords must be strong and rotated.
 
 - Data Integrity: SQL transactions ensure data is not corrupted during status changes.\`
-
-
-
