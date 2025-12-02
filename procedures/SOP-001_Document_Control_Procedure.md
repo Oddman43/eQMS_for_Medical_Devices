@@ -1,8 +1,10 @@
-# 1\. Purpose
+# SOP-001 Document Control Procedure
+
+## 1\. Purpose
 
 The purpose of this procedure is to define the controls needed to approve, review, update, and manage the lifecycle of documents within the Quality Management System (QMS). This ensures compliance with ISO 13485:2016 (Sec 4.2.4), MDR (EU) 2017/745, IVDR (EU) 2017/746, and 21 CFR Part 820.40. This procedure also addresses requirements for electronic records and signatures per 21 CFR Part 11.
 
-# 2\. Scope
+## 2\. Scope
 
 This procedure applies to all internal and external documents required by the QMS and Regulatory Authorities.
 
@@ -10,7 +12,7 @@ This procedure applies to all internal and external documents required by the QM
 
 - Out of Scope: Specific Records (filled forms) are controlled under the *Control of Records Procedure*, although this system manages their storage.
 
-# 3\. Definitions
+## 3\. Definitions
 
 - Controlled Document: A document that dictates a process or specification (e.g., SOP, Policy). Changes require approval.
 
@@ -22,7 +24,7 @@ This procedure applies to all internal and external documents required by the QM
 
 - Master Document List: The Master Document List (MDL) is an automatically generated list produced by the eQMS. It reflects the latest status, version, and metadata of all controlled documents. No manual editing of the MDL is allowed.
 
-# 4\. Roles and Responsibilities
+## 4\. Roles and Responsibilities
 
 ### 4\.1 Document Control Officer (DCO) / Quality Assurance (QA)
 
@@ -59,7 +61,7 @@ The QMS utilizes a lifecycle approach to document management. The Electronic QMS
 | **SUPERSEDED**         | A previous version of a document that has been replaced by a newer released version. Retained for historical traceability.            | **Edit:** None. **Read:** QA/Admin only             |
 | **OBSOLETE**           | The document has been withdrawn from use entirely and is no longer applicable to the QMS.                                             | **Edit:** None. **Read:** QA/Admin only             |
 
-# 6\. Procedure
+## 6\. Procedure
 
 ### 6\.1 Document Creation and Identification
 
@@ -147,7 +149,7 @@ The QMS utilizes a lifecycle approach to document management. The Electronic QMS
 
 4. Deletion of records is strictly prohibited unless authorized by Top Management and technically executed in a way that preserves the Audit Trail of the deletion.
 
-# 7\. Electronic System Requirements (Technical Specs for QA)
+## 7\. Electronic System Requirements (Technical Specs for QA)
 
 To ensure compliance with 21 CFR Part 11, the Python/SQL system includes:
 

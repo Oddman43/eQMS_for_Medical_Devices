@@ -1,8 +1,9 @@
-# 1\. Purpose
+# SOP-002 Record Control Procedure
+## 1\. Purpose
 
 The purpose of this procedure is to define the controls for the identification, storage, security, integrity, retrieval, retention time, and disposition of records. This ensures that evidence of conformity to requirements and of the effective operation of the QMS is maintained in compliance with ISO 13485:2016 (Sec 4.2.5), MDR (EU) 2017/745, IVDR (EU) 2017/746, and 21 CFR Part 820.180. This procedure also ensures data integrity per 21 CFR Part 11.
 
-# 2\. Scope
+## 2\. Scope
 
 This procedure applies to all Quality Records generated within the QMS.
 
@@ -10,7 +11,7 @@ This procedure applies to all Quality Records generated within the QMS.
 
 - Out of Scope: Documents (SOPs, Templates) which are controlled under the *Document Control Procedure*.
 
-# 3\. Definitions
+## 3\. Definitions
 
 - Record: A document stating results achieved or providing evidence of activities performed. Records are immutable snapshots of history.
 
@@ -20,7 +21,7 @@ This procedure applies to all Quality Records generated within the QMS.
 
 - Retention Period: The specific duration of time a record must be kept before destruction is permitted.
 
-# 4\. Roles and Responsibilities
+## 4\. Roles and Responsibilities
 
 ### 4\.1 Record Creator / Owner
 
@@ -44,7 +45,7 @@ This procedure applies to all Quality Records generated within the QMS.
 
 - Ensure security controls prevent unauthorized deletion or modification of records.
 
-# 5\. Record Lifecycle Definitions
+## 5\. Record Lifecycle Definitions
 
 The eQMS manages records through the following states. Unlike documents, records do not have versions; they have entry stages.
 
@@ -56,7 +57,7 @@ The eQMS manages records through the following states. Unlike documents, records
 | ARCHIVED                  | The record is no longer active but is kept for the retention period.                         | Edit: None. Read: QA/Admin (Retrieval only)                          |
 | DESTROYED                 | The record has been permanently deleted after the retention period (metadata log preserved). | Edit: None. Read: None                                               |
 
-# 6\. Procedure
+## 6\. Procedure
 
 ### 6\.1 Record Generation
 
@@ -118,7 +119,7 @@ The eQMS manages records through the following states. Unlike documents, records
 
 2. A "Certificate of Destruction" or a metadata log entry must be kept, indicating *which* records were destroyed and *when*.
 
-# 7\. Electronic System Requirements (Technical Specs for QA)
+## 7\. Electronic System Requirements (Technical Specs for QA)
 
 To ensure compliance, the Python/SQL system includes:
 
