@@ -2,6 +2,8 @@
 
 Hands-on exploration of ISO 13485 and FDA 21 CFR 820 in medical device quality management
 
+Intended as a personal project to learn
+
 ## Table of Contents
 🚧 Working on 🚧:
 
