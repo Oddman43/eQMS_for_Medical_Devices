@@ -8,6 +8,7 @@ Intended as a personal project to learn
 🚧 Working on 🚧:
 
 - [Document Control](#document-control)
+- Record Control
 
 Future modules:
 
