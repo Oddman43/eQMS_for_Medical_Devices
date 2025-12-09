@@ -66,3 +66,25 @@ def create_new_document(
         next_ver_id, next_doc_id, "0.1", "DRAFT", destination_path_root, None
     )
     return (new_document, new_version)
+
+
+def write_new_doc(
+    header: Document_Header,
+    version: Document_Version,
+    db_path: str = "/data/database/mediqms.db",
+) -> None:
+    with sqlite3.connect(db_path) as db:
+        try:
+            db.execute(
+                "INSERT INTO documents (doc_id, doc_num, title, owner_id, type) VALUES (?, ?, ?, ?, ?)",
+                header.to_db_tuple(),
+            )
+            db.execute(
+                "INSERT INTO versions (version_id, doc, version, status, file_path, effective_date) VALUES (?, ?, ?, ?, ?, ?)",
+                version.to_db_tuple(),
+            )
+            db.commit()
+
+        except sqlite3.Error as e:
+            db.rollback()
+            raise e
