@@ -36,7 +36,7 @@ class Document_Version:
     label: str
     status: str
     file_path: str
-    effective_date: str
+    effective_date: str | None
 
     def __post_init__(self) -> None:
         basic_check: str | None = self._basic_checks()
