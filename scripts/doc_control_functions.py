@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 
 from doc_class import Document_Header, Document_Version
-from ..main import document_types, template_map
+from main import document_types, template_map
 import os
 import shutil
 
