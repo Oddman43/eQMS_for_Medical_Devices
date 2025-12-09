@@ -1,4 +1,3 @@
-# from doc_class import Document_Header, Document_Version
 from doc_control_functions import create_new_document, write_new_doc
 from config import db_path
 

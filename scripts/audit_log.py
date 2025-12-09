@@ -8,7 +8,7 @@ from doc_class import Document_Header, Document_Version
 def prepare_audit_data(
     document: Document_Header,
     version: Document_Version,
-    db_path: str = "/data/database/mediqms.db",
+    db_path: str,
 ) -> tuple[dict | None, dict]:  # type: ignore
     with sqlite3.connect(db_path) as db:
         cur: sqlite3.Cursor = db.cursor()
@@ -35,7 +35,7 @@ def prepare_audit_data(
 def audit_log_documents(
     document: Document_Header,
     version: Document_Version,
-    db_path: str = "/data/database/mediqms.db",
+    db_path: str,
 ) -> None:
     old_val, new_val = prepare_audit_data(document, version, db_path=db_path)
     old_val_json: str | None = json.dumps(old_val) if old_val is not None else None

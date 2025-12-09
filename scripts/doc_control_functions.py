@@ -10,7 +10,7 @@ from config import document_types, template_map
 
 
 def create_new_document(
-    title: str, type: str, owner_id: int, db_path: str = "/data/database/mediqms.db"
+    title: str, type: str, owner_id: int, db_path: str
 ) -> tuple[Document_Header, Document_Version]:
     if type not in document_types.values():
         raise (ValueError(f"Invalid type, not in valid types: '{type}'"))
@@ -73,7 +73,7 @@ def create_new_document(
 def write_new_doc(
     header: Document_Header,
     version: Document_Version,
-    db_path: str = "/data/database/mediqms.db",
+    db_path: str,
 ) -> None:
     with sqlite3.connect(db_path) as db:
         try:
