@@ -6,7 +6,7 @@ import os
 
 
 def approve_document(
-    user: str, version_id: int, db_path: str, date: str | None
+    user: str, version_id: int, db_path: str, date: str | None = None
 ) -> None:
     table_affected: str = "versions"
     timestamp: str = datetime.now().isoformat()
