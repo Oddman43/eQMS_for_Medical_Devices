@@ -10,3 +10,8 @@ if __name__ == "__main__":
     write_new_doc(doc, ver, db_path)
     approve_document("charlie_eng", 1, db_path)
     approve_document("alice_qa", 1, db_path, datetime.now().isoformat())
+    revise_doc("alice_qa", "SOP-001", db_path)
+    doc, ver = create_new_document("test2", "SOP", 4, db_path)
+    write_new_doc(doc, ver, db_path)
+    approve_document("charlie_eng", 2, db_path)
+    approve_document("alice_qa", 2, db_path, datetime.now().isoformat())
