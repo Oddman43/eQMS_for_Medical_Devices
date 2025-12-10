@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 if __name__ == "__main__":
-    ...
-    # doc, ver = create_new_document("test", "SOP", 4, db_path)
-    # write_new_doc(doc, ver, db_path)
-    # approve_document("alice_qa", 1, db_path, datetime.now().isoformat())
+    doc, ver = create_new_document("test", "SOP", 4, db_path)
+    write_new_doc(doc, ver, db_path)
+    approve_document("charlie_eng", 1, db_path)
+    approve_document("alice_qa", 1, db_path, datetime.now().isoformat())
