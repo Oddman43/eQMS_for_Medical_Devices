@@ -5,7 +5,8 @@ import os
 import shutil
 
 from doc_class import Document_Header, Document_Version
-from config import document_types, template_map, user_info
+from config import document_types, template_map
+from base_fns import audit_log_docs, user_info
 
 
 def create_new_document(
@@ -87,3 +88,5 @@ def write_new_doc(
         except sqlite3.Error as e:
             db.rollback()
             raise e
+    audit_log_docs(None, header, header.owner, "CREATE", db_path)
+    audit_log_docs(None, version, header.owner, "CREATE", db_path)
