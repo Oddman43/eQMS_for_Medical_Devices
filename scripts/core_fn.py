@@ -135,3 +135,30 @@ def update_db(table: str, new_values: dict, object, db_path: str) -> None:
         except sqlite3.Error as e:
             db.rollback()
             raise e
+
+
+def max_id(table: str, field: str, db_path: str):
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(f"SELECT MAX({field}) FROM {table}")
+        return cur.fetchone()[0]
+
+
+def create_version(version_obj: Document_Version, db_path: str) -> None:
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(
+            "INSERT INTO versions (version_id, doc, version, status, file_path, effective_date) VALUES (?, ?, ?, ?, ?, ?)",
+            version_obj.to_db_tuple(),
+        )
+        db.commit()
+
+
+def create_doc(doc_obj: Document_Header, db_path: str) -> None:
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(
+            "INSERT INTO documents (doc_id, doc_num, title, owner_id, type) VALUES (?, ?, ?, ?, ?)",
+            doc_obj.to_db_tuple(),
+        )
+        db.commit()
