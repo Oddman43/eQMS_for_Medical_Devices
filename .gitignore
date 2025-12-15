@@ -210,3 +210,4 @@ MediQMS.code-workspace
 .vscode
 .DS_Store
 test.py
+data/videos
