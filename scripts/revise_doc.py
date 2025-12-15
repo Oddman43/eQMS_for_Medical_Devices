@@ -1,5 +1,6 @@
 import os
 import shutil
+import sqlite3
 from copy import deepcopy
 from doc_class import Document_Version, Document_Header
 from core_fn import (
@@ -23,14 +24,16 @@ def revise_doc(user: str, doc_num: str, db_path: str) -> None:
     user_id: int
     user_roles: list
     user_id, _, user_roles = user_info(user, db_path)
-    # cur.execute(
-    #     "SELECT version_id FROM versions WHERE doc = ? AND status IN ('DRAFT', 'IN_REVIEW')",
-    #     (doc_id,),
-    # )
-    # if cur.fetchone():
-    #     raise ValueError(
-    #         f"Draft or In review already in process for document: '{doc_num}'"
-    #     )
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(
+            "SELECT version_id FROM versions WHERE doc = ? AND status IN ('DRAFT', 'IN_REVIEW')",
+            (parent_doc.id,),
+        )
+        if cur.fetchone():
+            raise ValueError(
+                f"Draft or In review already in process for document: '{doc_num}'"
+            )
 
     if not (user_id == parent_doc.owner or "Quality Manager" in user_roles):
         raise PermissionError(f"User not allwed to revise document: '{doc_num}'")
