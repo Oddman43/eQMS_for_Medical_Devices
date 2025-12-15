@@ -28,6 +28,13 @@ class Document_Header:
         else:
             return None
 
+    def __iter__(self):
+        yield "doc_id", self.id
+        yield "doc_num", self.number
+        yield "title", self.title
+        yield "owner_id", self.owner
+        yield "type", self.type
+
     def to_db_tuple(self) -> tuple:
         return (self.id, self.number, self.title, self.owner, self.type)
 
@@ -36,7 +43,7 @@ class Document_Header:
 class Document_Version:
     id: int
     doc: int
-    label: str
+    version: str
     status: str
     file_path: str
     effective_date: str | None
@@ -47,8 +54,8 @@ class Document_Version:
             raise (ValueError(basic_check))
 
     def _basic_checks(self) -> str | None:
-        if not re.fullmatch(r"^\d+\.\d+$", self.label):
-            return f"Invalid label major or minor is not an integer: '{self.label}'"
+        if not re.fullmatch(r"^\d+\.\d+$", self.version):
+            return f"Invalid version major or minor is not an integer: '{self.version}'"
         if self.status not in status_types:
             return f"Invalid version status: '{self.status}'"
         if not self.file_path:
@@ -58,11 +65,19 @@ class Document_Version:
         else:
             return None
 
+    def __iter__(self):
+        yield "version_id", self.id
+        yield "doc", self.doc
+        yield "version", self.version
+        yield "status", self.status
+        yield "file_path", self.file_path
+        yield "effective_date", self.effective_date
+
     def to_db_tuple(self) -> tuple:
         return (
             self.id,
             self.doc,
-            self.label,
+            self.version,
             self.status,
             self.file_path,
             self.effective_date,
