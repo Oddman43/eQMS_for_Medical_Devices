@@ -106,9 +106,7 @@ def version_info(
     if not modifier:
         query: str = "SELECT version_id, version, status, file_path, effective_date FROM versions WHERE doc = ? ORDER BY version_id DESC LIMIT 1"
     else:
-        query: str = (
-            f"SELECT version_id, file_path FROM versions WHERE doc = ? AND {modifier[0]} = '{modifier[1]}' ORDER BY version_id DESC LIMIT 1",  # type: ignore
-        )  # type: ignore
+        query: str = f"SELECT version_id, version, status, file_path, effective_date FROM versions WHERE doc = ? AND {modifier[0]} = '{modifier[1]}' ORDER BY version_id DESC LIMIT 1"
     with sqlite3.connect(db_path) as db:
         cur: sqlite3.Cursor = db.cursor()
         cur.execute(
