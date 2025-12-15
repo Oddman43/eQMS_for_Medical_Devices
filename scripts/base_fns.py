@@ -103,7 +103,7 @@ def version_info(
     status: str
     file_path: str
     effective_date: str
-    if modifier:
+    if not modifier:
         query: str = "SELECT version_id, version, status, file_path, effective_date FROM versions WHERE doc = ? ORDER BY version_id DESC LIMIT 1"
     else:
         query: str = (
@@ -120,3 +120,18 @@ def version_info(
     return Document_Version(
         version_id, doc_id, version, status, file_path, effective_date
     )
+
+
+def update_db(table: str, new_values: dict, object, db_path: str) -> None:
+    update_fields: str = ", ".join([f"{key} = ?" for key in new_values.keys()])
+    values: list = list(new_values.values())
+    values.append(object.id)
+    query_update: str = f"UPDATE {table} SET {update_fields} WHERE version_id = ?"
+    with sqlite3.connect(db_path) as db:
+        try:
+            cur: sqlite3.Cursor = db.cursor()
+            cur.execute(query_update, tuple(values))
+            db.commit()
+        except sqlite3.Error as e:
+            db.rollback()
+            raise e
