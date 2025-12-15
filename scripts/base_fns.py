@@ -34,7 +34,7 @@ def audit_log_docs(
     user_id: int,
     action: str,
     db_path: str,
-) -> None:
+) -> dict:
     if isinstance(new_object, Document_Header):
         table_affected: str = "documents"
     else:
@@ -76,6 +76,7 @@ def audit_log_docs(
         except sqlite3.Error as e:
             db.rollback()
             raise e
+    return new_val
 
 
 def doc_info(doc_num: str, db_path: str) -> Document_Header:
@@ -94,16 +95,24 @@ def doc_info(doc_num: str, db_path: str) -> Document_Header:
     return Document_Header(doc_id, doc_num, title, owner_id, doc_type)
 
 
-def latest_version_info(doc_id: int, db_path: str) -> Document_Version:
+def version_info(
+    doc_id: int, db_path: str, modifier: list | None = None
+) -> Document_Version:
     version_id: int
     version: str
     status: str
     file_path: str
     effective_date: str
+    if modifier:
+        query: str = "SELECT version_id, version, status, file_path, effective_date FROM versions WHERE doc = ? ORDER BY version_id DESC LIMIT 1"
+    else:
+        query: str = (
+            f"SELECT version_id, file_path FROM versions WHERE doc = ? AND {modifier[0]} = '{modifier[1]}' ORDER BY version_id DESC LIMIT 1",  # type: ignore
+        )  # type: ignore
     with sqlite3.connect(db_path) as db:
         cur: sqlite3.Cursor = db.cursor()
         cur.execute(
-            "SELECT version_id, version, status, file_path, effective_date FROM versions WHERE doc = ? ORDER BY version_id DESC LIMIT 1",
+            query,
             (doc_id,),
         )
         results: tuple = cur.fetchone()
