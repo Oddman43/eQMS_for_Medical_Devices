@@ -6,7 +6,6 @@ from core_fn import (
     doc_info,
     version_info,
     user_info,
-    update_db,
     audit_log_docs,
     max_id,
     create_version,
@@ -49,6 +48,5 @@ def revise_doc(user: str, doc_num: str, db_path: str) -> None:
     new_id: int = max_id("versions", "version_id", db_path) + 1
     version_new.id = new_id
     shutil.copy(version_old.file_path, version_new.file_path)
-    new_vals: dict = audit_log_docs(version_old, version_new, user_id, action, db_path)
-    # update_db("versions", new_vals, new_version, db_path)
-    create_version(new_version, db_path)
+    audit_log_docs(None, version_new, user_id, action, db_path)
+    create_version(version_new, db_path)
