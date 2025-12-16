@@ -118,7 +118,9 @@ def write_approval(
     version_id: int = version_obj.id
     with sqlite3.connect(db_path) as db:
         cur: sqlite3.Cursor = db.cursor()
-        insert_query: str = "INSERT INTO approvals (version_id, approver_id, date_signature, status, role_signing, signature_hash) VALUES (?, ?, ?, ?, ?, ?)"
+        insert_query: str = """INSERT INTO approvals 
+                            (version_id, approver_id, date_signature, status, role_signing, signature_hash) 
+                            VALUES (?, ?, ?, ?, ?, ?)"""
         if user_type == "owner":
             for info in [["APPROVED", "OWNER"], ["PENDING", "QUALITY_MANAGER"]]:
                 status: str
