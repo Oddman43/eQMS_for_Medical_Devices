@@ -7,10 +7,10 @@ INSERT INTO roles (role_id, role_name, description, permisions) VALUES
 
 INSERT INTO users (user_id, user_name, full_name, email, active_flag, password_hash) VALUES 
 (1, 'admin', 'System Administrator', 'admin@meddevice.com', 1, 'hash_secret_admin_123'),
-(2, 'alice_qa', 'Alice Smith', 'alice.smith@meddevice.com', 1, 'hash_secret_alice_456'),
-(3, 'bob_ra', 'Bob Jones', 'bob.jones@meddevice.com', 1, 'hash_secret_bob_789'),
-(4, 'charlie_eng', 'Charlie Davis', 'charlie.davis@meddevice.com', 1, 'hash_secret_charlie_abc'),
-(5, 'david_ops', 'David White', 'david.white@meddevice.com', 1, 'hash_secret_david_def');
+(2, 'quality.manager', 'Alice Smith', 'alice.smith@meddevice.com', 1, 'hash_secret_alice_456'),
+(3, 'regulatory.affairs', 'Bob Jones', 'bob.jones@meddevice.com', 1, 'hash_secret_bob_789'),
+(4, 'albert.sevilleja', 'Albert Sevillej', 'albert.sevilleja@meddevice.com', 1, 'hash_secret_albert_abc'),
+(5, 'walter.white', 'Walter White', 'walter.white@meddevice.com', 1, 'hash_secret_walter_def');
 
 INSERT INTO users_roles (user, role) VALUES 
 (1, 1),
