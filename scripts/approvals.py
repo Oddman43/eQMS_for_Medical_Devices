@@ -204,3 +204,4 @@ def reject_doc(
     audit_log_docs(version_root, version_new, user_id, "CREATE", db_path)
     update_db("versions", rejected_new_vals, version_old, db_path)
     create_version(version_new, db_path)
+    write_approval(user_id, user_role, version_root, action, db_path)
