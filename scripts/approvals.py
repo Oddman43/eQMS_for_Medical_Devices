@@ -112,6 +112,7 @@ def write_approval(
     version_obj: Document_Version,
     action: str,
     db_path: str,
+    comment: str | None = None,
 ) -> None:
     timestamp: str = datetime.now().isoformat()
     version_id: int = version_obj.id
@@ -130,28 +131,46 @@ def write_approval(
                     (version_id, user_id, timestamp, status, role, row_hash),
                 )
         else:
+            role: str = "QUALITY_MANAGER"
             if action == "APPROVE":
                 status: str = "APPROVED"
+                update_query: str = """UPDATE approvals
+                    SET
+                        approver_id = ?,
+                        date_signature = ?,
+                        status = ?,
+                        signature_hash = ?
+                    WHERE
+                        version_id = ?
+                        AND STATUS = 'PENDING'
+                    """
+                row_info: str = f"{version_id}{user_id}{timestamp}{status}{role}"
+                row_hash: str = hashlib.sha256(row_info.encode("utf-8")).hexdigest()
+                cur.execute(
+                    update_query,
+                    (user_id, timestamp, status, row_hash, version_id),
+                )
             elif action == "REJECT":
                 status: str = "REJECTED"
+                update_query: str = """UPDATE approvals
+                    SET
+                        approver_id = ?,
+                        date_signature = ?,
+                        status = ?,
+                        signature_hash = ?,
+                        comments = ?
+                    WHERE
+                        version_id = ?
+                        AND STATUS = 'PENDING'
+                    """
+                row_info: str = f"{version_id}{user_id}{timestamp}{status}{role}"
+                row_hash: str = hashlib.sha256(row_info.encode("utf-8")).hexdigest()
+                cur.execute(
+                    update_query,
+                    (user_id, timestamp, status, row_hash, comment, version_id),
+                )
             else:
                 raise ValueError(f"Action not permited: '{action}'")
-            role: str = "QUALITY_MANAGER"
-            update_query: str = """UPDATE approvals
-                SET
-                    date_signature = ?,
-                    status = ?,
-                    signature_hash = ?
-                WHERE
-                    version_id = ?
-                    AND STATUS = 'PENDING'
-                """
-            row_info: str = f"{version_id}{user_id}{timestamp}{status}{role}"
-            row_hash: str = hashlib.sha256(row_info.encode("utf-8")).hexdigest()
-            cur.execute(
-                update_query,
-                (timestamp, status, row_hash, version_id),
-            )
         db.commit()
 
 
@@ -204,4 +223,4 @@ def reject_doc(
     audit_log_docs(version_root, version_new, user_id, "CREATE", db_path)
     update_db("versions", rejected_new_vals, version_old, db_path)
     create_version(version_new, db_path)
-    write_approval(user_id, user_role, version_root, action, db_path)
+    write_approval(user_id, user_role, version_root, action, db_path, comment)
