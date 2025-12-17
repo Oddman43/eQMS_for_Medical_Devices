@@ -211,3 +211,4 @@ MediQMS.code-workspace
 .DS_Store
 test.py
 data/videos
+data/posts
