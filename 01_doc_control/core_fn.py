@@ -160,3 +160,9 @@ def create_doc(doc_obj: Document_Header, db_path: str) -> None:
             doc_obj.to_db_tuple(),
         )
         db.commit()
+
+
+def lazy_check(): ...
+
+
+# Pasar de training a released cuando toque
