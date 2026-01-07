@@ -32,7 +32,7 @@ document_types: dict[str, str] = {
 status_types: list = [
     "DRAFT",
     "IN_REVIEW",
-    "APPROVED_PENDING",
+    "TRAINING",
     "RELEASED",
     "SUPERSEDED",
     "OBSOLETE",
