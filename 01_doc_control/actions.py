@@ -3,7 +3,7 @@ import os
 import shutil
 import sqlite3
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from copy import deepcopy
 from core_fn import (
     audit_log_docs,
@@ -30,7 +30,7 @@ def approve_document(
     user: str,
     doc_num: str,
     db_path: str,
-    date: str | None = None,
+    efective_date: str | None = (datetime.now() + timedelta(days=15)).isoformat(),
     comment: str | None = None,
 ) -> None:
     parent_doc: Document_Header
@@ -43,20 +43,22 @@ def approve_document(
         version_new.status = "IN_REVIEW"
         action: str = "UPDATE"
     elif user_role == "QM" and version_old.status == "IN_REVIEW":
-        version_new.status = "RELEASED"
-        action: str = "RELEASE"
-        if not date:
-            raise ValueError(f"Date field is obligatory: '{date}'")
-        version_new.effective_date = date  # type: ignore
+        version_new.status = "TRAINING"
+        action: str = "APROVE"
+        if not efective_date:
+            raise ValueError(f"Efective_date field is obligatory: '{efective_date}'")
+        if datetime.fromisoformat(efective_date) < (
+            datetime.now() + timedelta(days=14)
+        ):
+            raise ValueError("Efective date must be at least 15 days from today")
+        version_new.effective_date = efective_date  # type: ignore
         major_version: int = int(version_old.version.split(".")[0])
         new_version_major: int = major_version + 1
         version_new.version = f"{new_version_major}.0"
-        if major_version >= 1:
-            supersed_docs(parent_doc.id, user_id, db_path)
         version_new.file_path = (
-            version_old.file_path.replace("_DRAFT", "")
+            version_old.file_path.replace("_DRAFT", "_TRAINING")
             .replace(version_old.version, version_new.version)
-            .replace("01_drafts", "03_released")
+            .replace("01_drafts", "02_pending_approval")
         )
         if os.path.exists(version_old.file_path):
             shutil.move(version_old.file_path, version_new.file_path)
@@ -87,25 +89,6 @@ def approve_checks(user: str, doc_num: str, db_path: str) -> tuple:
     else:
         raise PermissionError(f"Action not permited for user: '{user}'")
     return parent_doc, version_newest, user_type, user_id
-
-
-def supersed_docs(doc_id: int, user_id: int, db_path: str) -> None:
-    action: str = "SUPERSEDED"
-    version_old: Document_Version = version_info(
-        doc_id, db_path, ["status", "RELEASED"]
-    )
-    version_superseded: Document_Version = deepcopy(version_old)
-    tmp_file_path: str = version_superseded.file_path.replace(
-        "03_released", "04_archive"
-    )
-    root, ext = os.path.splitext(tmp_file_path)
-    version_superseded.file_path = f"{root}_SUPERSEDED{ext}"
-    version_superseded.status = "SUPERSEDED"
-    shutil.move(version_old.file_path, version_superseded.file_path)
-    new_val: dict = audit_log_docs(
-        version_old, version_superseded, user_id, action, db_path
-    )
-    update_db("versions", new_val, version_superseded, db_path)
 
 
 def write_approvals_table(
