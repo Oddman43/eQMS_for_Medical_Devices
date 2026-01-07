@@ -184,7 +184,27 @@ def supersed_docs(doc_id: int, user_id: int, db_path: str) -> None:
     update_db("versions", new_val, version_superseded, db_path)
 
 
-def assign_training(): ...
+def get_training_users(db_path: str) -> list[int]:
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(
+            "SELECT user FROM users_roles WHERE role = (SELECT role_id FROM roles WHERE role_name = 'General Employee')"
+        )
+        return [i[0] for i in cur.fetchall()]
+
+
+def inital_trining(
+    user_id: int, version_id: int, due_date: str, assigned_date: str, db_path: str
+) -> None:
+    query_training = """
+    INSERT INTO training_records(user_id, version_id, status, assigned_date, due_date) VALUES(?, ?, ?, ?, ?)
+    """
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(
+            query_training, (user_id, version_id, "ASSIGNED", assigned_date, due_date)
+        )
+        db.commit()
 
 
 def lazy_check(): ...
