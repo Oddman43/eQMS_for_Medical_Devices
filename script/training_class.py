@@ -10,7 +10,8 @@ class Training:
         status: str,
         assigned_date: str,
         due_date: str,
-        completion_date: str | None,
+        completion_date: str | None = None,
+        score: int | None = None,
     ) -> None:
         self.id: int = training_id
         self.user_id: int = user_id
@@ -24,6 +25,7 @@ class Training:
             )
         else:
             self.completion_date = None
+        self.score: int | None = score
 
     def __iter__(self):
         yield "training_id", self.id
@@ -36,6 +38,7 @@ class Training:
             yield "completion_date", self.completion_date.isoformat()
         else:
             yield "completion_date", None
+        yield "score", self.score
 
     def to_db_tuple(self) -> tuple:
         completion_str: str | None = (
@@ -49,4 +52,5 @@ class Training:
             self.assigned_date.isoformat(),
             self.due_date.isoformat(),
             completion_str,
+            self.score,
         )
