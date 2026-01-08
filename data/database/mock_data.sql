@@ -17,12 +17,12 @@ INSERT INTO users (user_id, user_name, full_name, email, active_flag, password_h
 (10, 'tuco.salamanca', 'Tuco Salamanca', 'tuco.salamanca@meddevice.com', 0, 'hash_secret_tuco_tight');
 
 INSERT INTO users_roles (user, role) VALUES 
-(1, 5),
-(2, 7),
-(3, 8),
-(4, 2),
-(5, 3),
-(5, 4),
-(5, 6),
-(5, 9),
-(5, 10);
+(5, 1),
+(7, 2),
+(8, 3),
+(2, 4),
+(3, 5),
+(4, 5),
+(6, 5),
+(9, 5),
+(10, 5);
