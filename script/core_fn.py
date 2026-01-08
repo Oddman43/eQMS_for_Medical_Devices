@@ -278,6 +278,39 @@ def get_training(user_id: int, doc_num: str, db_path: str) -> Training:
         return Training(*res[:-1])
 
 
+def update_training(
+    old_training_obj: Training, new_training_obj: Training, db_path: str
+) -> None:
+    if new_training_obj.status == "COMPLETED":
+        raw_hash: str = f"{new_training_obj.id}{new_training_obj.user_id}{new_training_obj.version_id}{new_training_obj.status}{new_training_obj.assigned_date}{new_training_obj.due_date}{new_training_obj.completion_date}{new_training_obj.score}"
+        row_hash: str = hashlib.sha256(raw_hash.encode("utf-8")).hexdigest()
+        query_complete: str = """
+        UPDATE training_records SET(status, completion_date, score, signature_hash) = (?, ?, ?, ?) WHERE training_id = ?
+        """
+        update_tuple: tuple = (
+            new_training_obj.status,
+            new_training_obj.completion_date,
+            new_training_obj.score,
+            row_hash,
+            new_training_obj.id,
+        )
+        with sqlite3.connect(db_path) as db:
+            cur: sqlite3.Cursor = db.cursor()
+            cur.execute(query_complete, update_tuple)
+            db.commit()
+
+    else:
+        query_fail: str = """
+        UPDATE training_records SET(status, score) = (?, ?) WHERE training_id = ?
+        """
+        with sqlite3.connect(db_path) as db:
+            cur: sqlite3.Cursor = db.cursor()
+            cur.execute(
+                query_fail,
+                (new_training_obj.status, new_training_obj.score, new_training_obj.id),
+            )
+
+
 def lazy_check(): ...
 
 
