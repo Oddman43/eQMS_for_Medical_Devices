@@ -19,10 +19,13 @@ from core_actions import (
     get_user_id,
     supersed_docs,
 )
+from config import db_path
 
 
 def doc_action(action: str) -> FunctionType:  # type: ignore
     if action == "TRAINING":
+        lazy_check(db_path=db_path)
+        check_overdue(db_path=db_path)
         return do_training
     else:
         raise ValueError("Action does not exist")
