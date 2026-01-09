@@ -60,3 +60,5 @@ template_map: dict[str, str] = {
     "LBL": str(BASE_DIR / "storage/mock_external/Mock_Label.jpg"),
     "EXT": str(BASE_DIR / "storage/mock_external/Mock_Standard.pdf"),
 }
+
+training_docs: list = ["QM", "POL", "SOP", "WI"]
