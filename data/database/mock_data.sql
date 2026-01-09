@@ -1,4 +1,5 @@
 INSERT INTO roles (role_id, role_name, description, permisions) VALUES 
+(0, 'system_auto', 'Service rol for automated tasks', '[all]'),
 (1, 'System Admin', 'IT Administrator with full system access', '["manage_users", "manage_system", "read_all"]'),
 (2, 'Quality Manager', 'Responsible for QMS approval and release', '["approve_doc", "release_doc", "review_doc", "obsolete_doc", "manage_capa"]'),
 (3, 'Regulatory Affairs', 'Ensures regulatory compliance (MDR/FDA)', '["approve_doc", "review_doc", "manage_external_standards"]'),
@@ -6,6 +7,7 @@ INSERT INTO roles (role_id, role_name, description, permisions) VALUES
 (5, 'General Employee', 'End user, read-only access to released docs', '["read_released", "sign_training"]');
 
 INSERT INTO users (user_id, user_name, full_name, email, active_flag, password_hash) VALUES 
+(0, 'SYSTEM_AUTO', 'SYSTEM', 'no-reply@sistema.com', 1, ''),
 (2, 'albert.sevilleja', 'Albert Sevilleja', 'albert.sevilleja@meddevice.com', 1, 'hash_secret_albert_abc'),
 (3, 'walter.white', 'Walter White', 'walter.white@meddevice.com', 1, 'hash_secret_heisenberg_blue'),
 (4, 'jesse.pinkman', 'Jesse Pinkman', 'jesse.pinkman@meddevice.com', 1, 'hash_secret_jesse_science'),
