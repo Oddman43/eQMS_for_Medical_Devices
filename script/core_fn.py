@@ -310,7 +310,7 @@ def update_training(new_training_obj: Training, db_path: str) -> None:
 
 
 def get_active_training(db_path: str) -> list:
-    query: str = "SELECT training_id, user_id, version_id, status, assigned_date, due_date FROM training_records WHERE status IN ('FAILED', 'ASSIGNED')"
+    query: str = "SELECT training_id, user_id, version_id, status, assigned_date, due_date, completion_date, score FROM training_records WHERE status IN ('FAILED', 'ASSIGNED')"
     with sqlite3.connect(db_path) as db:
         cur: sqlite3.Cursor = db.cursor()
         cur.execute(query)
@@ -334,7 +334,10 @@ def lazy_check(db_path: str):
             for i in res:
                 old_version: Document_Version = Document_Version(*i)
                 new_version: Document_Version = deepcopy(old_version)
+                major_v: int = int(old_version.version.split(".")[0])
                 if datetime.fromisoformat(old_version.effective_date) < datetime.now():  # type: ignore
+                    if major_v > 1:
+                        supersed_docs(old_version.doc, 0, db_path)
                     new_version.status = "RELEASED"
                     new_version.file_path = new_version.file_path.replace(
                         "_TRAINING", ""
