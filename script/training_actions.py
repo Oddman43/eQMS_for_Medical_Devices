@@ -40,7 +40,7 @@ def check_overdue(db_path: str) -> None:
     if len(active_training) >= 1:
         for active in active_training:
             training_event: Training = Training(*active)
-            if training_event.due_date > datetime.now():
+            if training_event.due_date < datetime.now():
                 new_training: Training = deepcopy(training_event)
                 new_training.status = "OVERDUE"
                 update_training(new_training, db_path)
