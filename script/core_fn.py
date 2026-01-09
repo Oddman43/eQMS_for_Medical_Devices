@@ -278,9 +278,7 @@ def get_training(user_id: int, doc_num: str, db_path: str) -> Training:
         return Training(*res[:-1])
 
 
-def update_training(
-    old_training_obj: Training, new_training_obj: Training, db_path: str
-) -> None:
+def update_training(new_training_obj: Training, db_path: str) -> None:
     if new_training_obj.status == "COMPLETED":
         raw_hash: str = f"{new_training_obj.id}{new_training_obj.user_id}{new_training_obj.version_id}{new_training_obj.status}{new_training_obj.assigned_date}{new_training_obj.due_date}{new_training_obj.completion_date}{new_training_obj.score}"
         row_hash: str = hashlib.sha256(raw_hash.encode("utf-8")).hexdigest()
@@ -309,6 +307,21 @@ def update_training(
                 query_fail,
                 (new_training_obj.status, new_training_obj.score, new_training_obj.id),
             )
+
+
+def get_active_training(db_path: str) -> list:
+    query: str = "SELECT training_id, user_id, version_id, status, assigned_date, due_date FROM training_records WHERE status IN ('FAILED', 'ASSIGNED')"
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(query)
+        return cur.fetchall()
+
+
+def get_user_id(user: str, db_path: str) -> int:
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute("SELECT user_id FROM users WHERE user_name = ?", (user,))
+        return cur.fetchone()[0]
 
 
 def lazy_check(): ...
