@@ -324,7 +324,27 @@ def get_user_id(user: str, db_path: str) -> int:
         return cur.fetchone()[0]
 
 
-def lazy_check(): ...
+def lazy_check(db_path: str):
+    query: str = "SELECT * FROM versions WHERE status = 'TRAINING'"
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(query)
+        res: list[tuple] = cur.fetchall()
+        if len(res) >= 1:
+            for i in res:
+                old_version: Document_Version = Document_Version(*i)
+                new_version: Document_Version = deepcopy(old_version)
+                if datetime.fromisoformat(old_version.effective_date) < datetime.now():  # type: ignore
+                    new_version.status = "RELEASED"
+                    new_version.file_path = new_version.file_path.replace(
+                        "_TRAINING", ""
+                    ).replace("02_pending_approval", "03_released")
+                    if os.path.exists(old_version.file_path):
+                        shutil.move(old_version.file_path, new_version.file_path)
+                    new_vals: dict = audit_log_docs(
+                        old_version, new_version, 0, "AUTO_RELEASE", db_path
+                    )
+                    update_db("versions", new_vals, new_version, db_path)
 
 
 # Pasar de training a released cuando toque
