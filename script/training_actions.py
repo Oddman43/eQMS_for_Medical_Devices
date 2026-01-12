@@ -4,8 +4,8 @@ import shutil
 from types import FunctionType
 from copy import deepcopy
 from datetime import datetime
-from classes import Training, Document_Header, Document_Version
-from audit_actions import audit_log_training, audit_log_docs
+from classes import Training, Document_Header, Document_Version, Training_Review
+from audit_actions import audit_log_training, audit_log_docs, audit_log_review_training
 from core_actions import (
     update_db,
     get_training,
@@ -14,6 +14,7 @@ from core_actions import (
     get_training_users,
     max_id,
     inital_trining,
+    initial_training_review,
     update_training,
     get_active_training,
     get_user_id,
@@ -79,7 +80,7 @@ def check_overdue(db_path: str) -> None:
     if len(active_training) >= 1:
         for active in active_training:
             training_event: Training = Training(*active)
-            if training_event.due_date < datetime.now():
+            if training_event.due_date < datetime.now():  # type: ignore
                 new_training: Training = deepcopy(training_event)
                 new_training.status = "OVERDUE"
                 update_training(new_training, db_path)
@@ -116,3 +117,18 @@ def lazy_check(db_path: str):
                         old_version, new_version, 0, "AUTO_RELEASE", db_path
                     )
                     update_db("versions", new_vals, new_version, db_path)
+
+
+def create_ra_review_task(doc_version: int, db_path: str) -> None:
+    status: str = "PENDING"
+    ra_id: int = 8
+    tr_id: int = max_id("training_reviews", "tr_id", db_path)
+    ts: str = datetime.now().isoformat()
+    review_task: Training_Review = Training_Review(
+        tr_id, doc_version, ra_id, status, ts
+    )
+    initial_training_review(review_task, db_path)
+    audit_log_review_training(None, review_task, 0, "ASSIGN", db_path)
+
+
+def get_ra_check(): ...
