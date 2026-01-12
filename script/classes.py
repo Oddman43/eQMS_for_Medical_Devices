@@ -137,4 +137,44 @@ class Training:
         )
 
 
-# class Training_Review:
+@dataclass
+class Training_Review:
+    tr_id: int
+    version_id: int
+    reviewer_id: int
+    status: str
+    decision: str | None
+    comment: str | None
+    created_at: str | datetime
+    completed_at: str | datetime | None
+
+    def __post_init__(self):
+        if isinstance(self.created_at, str):
+            self.created_at = datetime.fromisoformat(self.created_at)
+        if isinstance(self.completed_at, str):
+            self.completed_at = datetime.fromisoformat(self.completed_at)
+
+    def __iter__(self):
+        yield "training_id", self.tr_id
+        yield "version_id", self.version_id
+        yield "reviewer_id", self.reviewer_id
+        yield "status", self.status
+        yield "decision", self.decision
+        yield "comment", self.comment
+        yield "created_at", self.created_at.isoformat()  # type: ignore
+        yield "completed_at", self.completed_at.isoformat()  # type: ignore
+
+    def to_db_tuple(self) -> tuple:
+        completion_at_str: str | None = (
+            self.completed_at.isoformat() if self.completed_at else None  # type: ignore
+        )
+        return (
+            self.tr_id,
+            self.version_id,
+            self.reviewer_id,
+            self.status,
+            self.decision,
+            self.comment,
+            self.created_at,
+            completion_at_str,
+        )
