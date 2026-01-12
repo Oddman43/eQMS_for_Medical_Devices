@@ -21,7 +21,8 @@ from core_actions import (
     update_training,
 )
 from audit_actions import audit_log_training
-from document_actions import approve_checks, write_approvals_table, assign_training
+from document_actions import approve_checks, write_approvals_table
+from training_actions import assign_training
 
 
 def create_new_document(title: str, type: str, user_name: str, db_path: str) -> None:
