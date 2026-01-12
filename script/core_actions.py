@@ -194,7 +194,7 @@ def update_training(new_training_obj: Training, db_path: str) -> None:
     if new_training_obj.status == "COMPLETED":
         raw_hash: str = f"{new_training_obj.id}{new_training_obj.user_id}{new_training_obj.version_id}{new_training_obj.status}{new_training_obj.assigned_date}{new_training_obj.due_date}{new_training_obj.completion_date}{new_training_obj.score}"
         row_hash: str = hashlib.sha256(raw_hash.encode("utf-8")).hexdigest()
-        query_complete: str = """
+        query: str = """
         UPDATE training_records SET(status, completion_date, score, signature_hash) = (?, ?, ?, ?) WHERE training_id = ?
         """
         update_tuple: tuple = (
@@ -204,21 +204,19 @@ def update_training(new_training_obj: Training, db_path: str) -> None:
             row_hash,
             new_training_obj.id,
         )
-        with sqlite3.connect(db_path) as db:
-            cur: sqlite3.Cursor = db.cursor()
-            cur.execute(query_complete, update_tuple)
-            db.commit()
-
     else:
-        query_fail: str = """
+        query: str = """
         UPDATE training_records SET(status, score) = (?, ?) WHERE training_id = ?
         """
-        with sqlite3.connect(db_path) as db:
-            cur: sqlite3.Cursor = db.cursor()
-            cur.execute(
-                query_fail,
-                (new_training_obj.status, new_training_obj.score, new_training_obj.id),
-            )
+        update_tuple: tuple = (
+            new_training_obj.status,
+            new_training_obj.score,
+            new_training_obj.id,
+        )
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(query, update_tuple)
+        db.commit()
 
 
 def get_active_training(db_path: str) -> list:
@@ -234,3 +232,46 @@ def get_user_id(user: str, db_path: str) -> int:
         cur: sqlite3.Cursor = db.cursor()
         cur.execute("SELECT user_id FROM users WHERE user_name = ?", (user,))
         return cur.fetchone()[0]
+
+
+def get_training_review_info(doc_id: int, db_path: str) -> tuple:
+    query: str = """
+    SELECT tr_id, version_id, reviewer_id, status, created_at, decision, comments, created_at, completed_at FROM training_reviews WHERE version_id = (
+        SELECT version_id FROM versions WHERE doc = ? AND status = 'TRAINING'
+    )
+    """
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(query, (doc_id,))
+        res: tuple = cur.fetchone()
+        return res[:-1]
+
+
+def update_training_review(new_tr_obj: Training_Review, db_path: str) -> None:
+    if new_tr_obj.decision == "RELEASED":
+        query: str = """
+        UPDATE training_reviews SET(status, decision, comments, completed_at, signature_hash) = (?, ?, ?, ?, ?) WHERE tr_id = ?
+        """
+        raw_hash: str = f"{new_tr_obj.tr_id}{new_tr_obj.decision}{new_tr_obj.comment}{new_tr_obj.completed_at}"
+        row_hash: str = hashlib.sha256(raw_hash.encode("utf-8")).hexdigest()
+        update_tuple: tuple = (
+            new_tr_obj.status,
+            new_tr_obj.decision,
+            new_tr_obj.decision,
+            new_tr_obj.completed_at,
+            row_hash,
+            new_tr_obj.tr_id,
+        )
+    else:
+        query: str = """
+        UPDATE training_reviews SET(decision, comments) = (?, ?) WHERE tr_id = ?
+        """
+        update_tuple: tuple = (
+            new_tr_obj.decision,
+            new_tr_obj.comment,
+            new_tr_obj.tr_id,
+        )
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(query, update_tuple)
+        db.commit()
