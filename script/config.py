@@ -62,3 +62,6 @@ template_map: dict[str, str] = {
 }
 
 training_docs: list = ["QM", "POL", "SOP", "WI"]
+
+training_review_status: list = ["PENDING", "CLOSED"]
+training_review_decision: list = ["RELEASED", "REJECTED"]
