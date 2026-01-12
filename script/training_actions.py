@@ -19,6 +19,8 @@ from core_actions import (
     get_active_training,
     get_user_id,
     supersed_docs,
+    get_training_review_info,
+    update_training_review,
 )
 from config import db_path
 
@@ -131,4 +133,27 @@ def create_ra_review_task(doc_version: int, db_path: str) -> None:
     audit_log_review_training(None, review_task, 0, "ASSIGN", db_path)
 
 
-def get_ra_check(): ...
+def get_ra_check(
+    doc_name: str, decision: str, db_path: str, comments: str | None = None
+):
+    ra_user_id: int = 8
+    doc: Document_Header = doc_info(doc_name, db_path)
+    version: Document_Version = version_info(doc.id, db_path)
+    old_ra_check: Training_Review = Training_Review(
+        *get_training_review_info(doc.id, db_path)
+    )
+    new_ra_check: Training_Review = deepcopy(old_ra_check)
+    new_ra_check.decision = decision
+    if comments:
+        new_ra_check.comment = comments
+    if decision == "RELEASED":
+        new_ra_check.status = "CLOSED"
+        new_ra_check.completed_at = datetime.now()
+        assign_training(
+            doc_name,
+            version.effective_date,  # type: ignore
+            ra_user_id,
+            db_path,
+        )
+    update_training_review(new_ra_check, db_path)
+    audit_log_review_training(old_ra_check, new_ra_check, ra_user_id, decision, db_path)
