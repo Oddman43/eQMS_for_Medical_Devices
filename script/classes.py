@@ -143,10 +143,10 @@ class Training_Review:
     version_id: int
     reviewer_id: int
     status: str
-    decision: str | None
-    comment: str | None
     created_at: str | datetime
-    completed_at: str | datetime | None
+    decision: str | None = None
+    comment: str | None = None
+    completed_at: str | datetime | None = None
 
     def __post_init__(self):
         if isinstance(self.created_at, str):
@@ -162,7 +162,10 @@ class Training_Review:
         yield "decision", self.decision
         yield "comment", self.comment
         yield "created_at", self.created_at.isoformat()  # type: ignore
-        yield "completed_at", self.completed_at.isoformat()  # type: ignore
+        if self.completed_at:
+            yield "completed_at", self.completed_at.isoformat()  # type: ignore
+        else:
+            yield "completed_at", None
 
     def to_db_tuple(self) -> tuple:
         completion_at_str: str | None = (
