@@ -3,7 +3,7 @@ import hashlib
 import shutil
 import os
 from copy import deepcopy
-from classes import Document_Header, Document_Version, Training
+from classes import Document_Header, Document_Version, Training, Training_Review
 from audit_actions import audit_log_docs
 
 
@@ -57,7 +57,8 @@ def version_info(
     if not modifier:
         query: str = "SELECT version_id, version, status, file_path, effective_date FROM versions WHERE doc = ? ORDER BY version_id DESC LIMIT 1"
     else:
-        query: str = f"SELECT version_id, version, status, file_path, effective_date FROM versions WHERE doc = ? AND {modifier[0]} = '{modifier[1]}' ORDER BY version_id DESC LIMIT 1"
+        query: str = f"""SELECT version_id, version, status, file_path, effective_date FROM versions 
+        WHERE doc = ? AND {modifier[0]} = '{modifier[1]}' ORDER BY version_id DESC LIMIT 1"""
     with sqlite3.connect(db_path) as db:
         cur: sqlite3.Cursor = db.cursor()
         cur.execute(
@@ -152,11 +153,23 @@ def get_training_users(db_path: str) -> list[int]:
 
 def inital_trining(training_obj: Training, db_path: str) -> None:
     query_training = """
-    INSERT INTO training_records(training_id, user_id, version_id, status, assigned_date, due_date, completion_date, score) VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO training_records(training_id, user_id, version_id, status, assigned_date, due_date, completion_date, score) 
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?)
     """
     with sqlite3.connect(db_path) as db:
         cur: sqlite3.Cursor = db.cursor()
         cur.execute(query_training, training_obj.to_db_tuple())
+        db.commit()
+
+
+def initial_training_review(training_review_obj: Training_Review, db_path: str) -> None:
+    query_training_review = """
+    INSERT INTO training_reviews(tr_id, version_id, reviewer_id, status, decision, comments, created_at, completed_at) 
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    with sqlite3.connect(db_path) as db:
+        cur: sqlite3.Cursor = db.cursor()
+        cur.execute(query_training_review, training_review_obj.to_db_tuple())
         db.commit()
 
 
