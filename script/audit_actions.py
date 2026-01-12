@@ -5,10 +5,16 @@ import hashlib
 from classes import Document_Header, Document_Version, Training, Training_Review
 
 
-def write_db_al(query: str, values: tuple, db_path: str) -> None:
+def write_db_al(values: tuple, db_path: str) -> None:
     with sqlite3.connect(db_path) as db:
         try:
-            db.execute(query, values)
+            db.execute(
+                """
+                INSERT INTO audit_log (table_affected, record_id, user, action, old_val, new_val, timestamp, hash)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                values,
+            )
             db.commit()
         except sqlite3.Error as e:
             db.rollback()
@@ -40,10 +46,6 @@ def audit_log_docs(
     timestam: str = datetime.now().isoformat()
     raw_hash: str = f"{table_affected}{record_id}{user_id}{action}{old_val_json}{new_val_json}{timestam}"
     row_hash: str = hashlib.sha256(raw_hash.encode("utf-8")).hexdigest()
-    query_insert: str = """
-        INSERT INTO audit_log (table_affected, record_id, user, action, old_val, new_val, timestamp, hash)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """
     vals: tuple = (
         table_affected,
         record_id,
@@ -54,7 +56,7 @@ def audit_log_docs(
         timestam,
         row_hash,
     )
-    write_db_al(query_insert, vals, db_path)
+    write_db_al(vals, db_path)
     return new_val
 
 
@@ -80,10 +82,6 @@ def audit_log_training(
     timestam: str = datetime.now().isoformat()
     raw_hash: str = f"{table_affected}{record_id}{user_id}{action}{old_val_json}{new_val_json}{timestam}"
     row_hash: str = hashlib.sha256(raw_hash.encode("utf-8")).hexdigest()
-    query_insert: str = """
-        INSERT INTO audit_log (table_affected, record_id, user, action, old_val, new_val, timestamp, hash)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """
     vals: tuple = (
         table_affected,
         record_id,
@@ -94,5 +92,38 @@ def audit_log_training(
         timestam,
         row_hash,
     )
-    write_db_al(query_insert, vals, db_path)
+    write_db_al(vals, db_path)
+    return new_val
+
+
+def audit_log_review_training(
+    old_tr_obj: Training_Review | None,
+    new_tr_obj: Training_Review,
+    user_id: int,
+    action: str,
+    db_path: str,
+) -> dict:
+    table_affected: str = "training_reviews"
+    old_dict: dict = {} if not old_tr_obj else dict(old_tr_obj)
+    new_dict: dict = dict(new_tr_obj)
+    changed_keys: list = [k for k, v in new_dict.items() if v != old_dict.get(k)]
+    old_val: dict = {k: old_dict.get(k) for k in changed_keys}
+    new_val: dict = {k: new_dict.get(k) for k in changed_keys}
+    old_val_json: str = json.dumps(old_val)
+    new_val_json: str = json.dumps(new_val)
+    record_id: int = new_tr_obj.tr_id
+    timestam: str = datetime.now().isoformat()
+    raw_hash: str = f"{table_affected}{record_id}{user_id}{action}{old_val_json}{new_val_json}{timestam}"
+    row_hash: str = hashlib.sha256(raw_hash.encode("utf-8")).hexdigest()
+    vals: tuple = (
+        table_affected,
+        record_id,
+        user_id,
+        action,
+        old_val_json,
+        new_val_json,
+        timestam,
+        row_hash,
+    )
+    write_db_al(vals, db_path)
     return new_val
