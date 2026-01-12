@@ -17,7 +17,7 @@ from core_actions import (
     create_doc,
 )
 from audit_actions import audit_log_docs
-from training_actions import assign_training
+from training_actions import create_ra_review_task
 from classes import Document_Header, Document_Version
 
 
@@ -145,7 +145,9 @@ def approve_document(
     update_db("versions", new_values, version_new, db_path)
     write_approvals_table(user_id, user_role, version_new, "APPROVE", db_path)
     if version_new.status == "TRAINING":
-        assign_training(doc_num, efective_date, user_id, db_path)  # type: ignore
+        create_ra_review_task(version_new.id, db_path)
+
+        # assign_training(doc_num, efective_date, user_id, db_path)  # type: ignore
 
 
 def approve_checks(user: str, doc_num: str, db_path: str) -> tuple:
