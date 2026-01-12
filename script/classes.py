@@ -85,31 +85,24 @@ class Document_Version:
         )
 
 
+@dataclass
 class Training:
-    def __init__(
-        self,
-        training_id: int,
-        user_id: int,
-        version_id: int,
-        status: str,
-        assigned_date: str,
-        due_date: str,
-        completion_date: str | None = None,
-        score: int | None = None,
-    ) -> None:
-        self.id: int = training_id
-        self.user_id: int = user_id
-        self.version_id: int = version_id
-        self.status: str = status
-        self.assigned_date: datetime = datetime.fromisoformat(assigned_date)
-        self.due_date: datetime = datetime.fromisoformat(due_date)
-        if completion_date:
-            self.completion_date: datetime | None = datetime.fromisoformat(
-                completion_date
-            )
-        else:
-            self.completion_date = None
-        self.score: int | None = score
+    id: int
+    user_id: int
+    version_id: int
+    status: str
+    assigned_date: datetime | str
+    due_date: datetime | str
+    completion_date: datetime | str | None = None
+    score: int | None = None
+
+    def __post_init__(self):
+        if isinstance(self.assigned_date, str):
+            self.assigned_date = datetime.fromisoformat(self.assigned_date)
+        if isinstance(self.due_date, str):
+            self.due_date = datetime.fromisoformat(self.due_date)
+        if isinstance(self.completion_date, str):
+            self.completion_date = datetime.fromisoformat(self.completion_date)
 
     def _checks(self) -> None | str:
         if self.status not in training_types:
@@ -120,25 +113,28 @@ class Training:
         yield "user_id", self.user_id
         yield "version_id", self.version_id
         yield "status", self.status
-        yield "assigned_date", self.assigned_date.isoformat()
-        yield "due_date", self.due_date.isoformat()
+        yield "assigned_date", self.assigned_date.isoformat()  # type: ignore
+        yield "due_date", self.due_date.isoformat()  # type: ignore
         if self.completion_date:
-            yield "completion_date", self.completion_date.isoformat()
+            yield "completion_date", self.completion_date.isoformat()  # type: ignore
         else:
             yield "completion_date", None
         yield "score", self.score
 
     def to_db_tuple(self) -> tuple:
         completion_str: str | None = (
-            self.completion_date.isoformat() if self.completion_date else None
+            self.completion_date.isoformat() if self.completion_date else None  # type: ignore
         )
         return (
             self.id,
             self.user_id,
             self.version_id,
             self.status,
-            self.assigned_date.isoformat(),
-            self.due_date.isoformat(),
+            self.assigned_date.isoformat(),  # type: ignore
+            self.due_date.isoformat(),  # type: ignore
             completion_str,
             self.score,
         )
+
+
+# class Training_Review:
