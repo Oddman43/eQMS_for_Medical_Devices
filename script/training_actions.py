@@ -149,11 +149,12 @@ def get_ra_check(
     if decision == "RELEASED":
         new_ra_check.status = "CLOSED"
         new_ra_check.completed_at = datetime.now()
+    update_training_review(new_ra_check, db_path)
+    audit_log_review_training(old_ra_check, new_ra_check, ra_user_id, decision, db_path)
+    if decision == "RELEASED":
         assign_training(
             doc_name,
             version.effective_date,  # type: ignore
             ra_user_id,
             db_path,
         )
-    update_training_review(new_ra_check, db_path)
-    audit_log_review_training(old_ra_check, new_ra_check, ra_user_id, decision, db_path)
