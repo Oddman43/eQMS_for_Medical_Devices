@@ -22,7 +22,7 @@ from core_actions import (
 )
 from audit_actions import audit_log_training
 from document_actions import approve_checks, write_approvals_table
-from training_actions import assign_training
+from training_actions import create_ra_review_task, get_ra_check
 
 
 def create_new_document(title: str, type: str, user_name: str, db_path: str) -> None:
@@ -132,7 +132,7 @@ def approve_document(
     update_db("versions", new_values, version_new, db_path)
     write_approvals_table(user_id, user_role, version_new, "APPROVE", db_path)
     if version_new.status == "TRAINING":
-        assign_training(doc_num, efective_date, user_id, db_path)  # type: ignore
+        create_ra_review_task(version_new.id, db_path)
 
 
 def do_training(user: str, doc_num: str, score: int, db_path: str) -> None:
@@ -194,6 +194,7 @@ approve_document("albert.sevilleja", "SOP-001", db_path, None)
 approve_document(
     "gus.fring", "SOP-001", db_path, (datetime.now() - timedelta(days=1)).isoformat()
 )
+get_ra_check("SOP-001", "RELEASED", db_path)
 training_users: list = [
     "walter.white",
     "jesse.pinkman",
@@ -209,7 +210,7 @@ approve_document("albert.sevilleja", "WI-001", db_path, None)
 approve_document(
     "gus.fring", "WI-001", db_path, (datetime.now() - timedelta(days=4)).isoformat()
 )
-
+get_ra_check("WI-001", "RELEASED", db_path)
 for user in training_users:
     score: int = 90
     if user == "mike.ehrmantraut":
@@ -226,6 +227,7 @@ approve_document("albert.sevilleja", "SOP-001", db_path, None)
 approve_document(
     "gus.fring", "SOP-001", db_path, (datetime.now() - timedelta(days=1)).isoformat()
 )
+get_ra_check("SOP-001", "RELEASED", db_path)
 for user in training_users:
     do_training(user, "SOP-001", 100, db_path)
 lazy_check(db_path)
@@ -235,6 +237,7 @@ approve_document("albert.sevilleja", "SOP-002", db_path, None)
 approve_document(
     "gus.fring", "SOP-002", db_path, (datetime.now() - timedelta(days=4)).isoformat()
 )
+get_ra_check("SOP-002", "RELEASED", db_path)
 for user in training_users:
     do_training(user, "SOP-002", 100, db_path)
 lazy_check(db_path)
@@ -245,3 +248,10 @@ approve_document("albert.sevilleja", "DWG-001", db_path, None)
 approve_document(
     "gus.fring", "DWG-001", db_path, (datetime.now() + timedelta(days=4)).isoformat()
 )
+
+create_new_document("testiño", "POL", "albert.sevilleja", db_path)
+approve_document("albert.sevilleja", "POL-001", db_path, None)
+approve_document(
+    "gus.fring", "POL-001", db_path, (datetime.now() - timedelta(days=4)).isoformat()
+)
+get_ra_check("POL-001", "RELEASED", db_path)
