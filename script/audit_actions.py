@@ -2,7 +2,17 @@ import sqlite3
 from datetime import datetime
 import json
 import hashlib
-from classes import Document_Header, Document_Version, Training
+from classes import Document_Header, Document_Version, Training, Training_Review
+
+
+def write_db_al(query: str, values: tuple, db_path: str) -> None:
+    with sqlite3.connect(db_path) as db:
+        try:
+            db.execute(query, values)
+            db.commit()
+        except sqlite3.Error as e:
+            db.rollback()
+            raise e
 
 
 def audit_log_docs(
@@ -34,25 +44,17 @@ def audit_log_docs(
         INSERT INTO audit_log (table_affected, record_id, user, action, old_val, new_val, timestamp, hash)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
-    with sqlite3.connect(db_path) as db:
-        try:
-            db.execute(
-                query_insert,
-                (
-                    table_affected,
-                    record_id,
-                    user_id,
-                    action,
-                    old_val_json,
-                    new_val_json,
-                    timestam,
-                    row_hash,
-                ),
-            )
-            db.commit()
-        except sqlite3.Error as e:
-            db.rollback()
-            raise e
+    vals: tuple = (
+        table_affected,
+        record_id,
+        user_id,
+        action,
+        old_val_json,
+        new_val_json,
+        timestam,
+        row_hash,
+    )
+    write_db_al(query_insert, vals, db_path)
     return new_val
 
 
@@ -62,7 +64,7 @@ def audit_log_training(
     user_id: int,
     action: str,
     db_path: str,
-):
+) -> dict:
     table_affected: str = "training_records"
     if not old_training_obj:
         old_dict: dict = {}
@@ -82,23 +84,15 @@ def audit_log_training(
         INSERT INTO audit_log (table_affected, record_id, user, action, old_val, new_val, timestamp, hash)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
-    with sqlite3.connect(db_path) as db:
-        try:
-            db.execute(
-                query_insert,
-                (
-                    table_affected,
-                    record_id,
-                    user_id,
-                    action,
-                    old_val_json,
-                    new_val_json,
-                    timestam,
-                    row_hash,
-                ),
-            )
-            db.commit()
-        except sqlite3.Error as e:
-            db.rollback()
-            raise e
+    vals: tuple = (
+        table_affected,
+        record_id,
+        user_id,
+        action,
+        old_val_json,
+        new_val_json,
+        timestam,
+        row_hash,
+    )
+    write_db_al(query_insert, vals, db_path)
     return new_val
