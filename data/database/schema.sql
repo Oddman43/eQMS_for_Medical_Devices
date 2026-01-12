@@ -86,6 +86,21 @@ CREATE TABLE training_records(
     FOREIGN KEY("version_id") REFERENCES "versions"("version_id")
 );
 
+CREATE TABLE training_reviews(
+    "tr_id" INTEGER,
+    "version_id" INTEGER,
+    "reviewer_id" INTEGER,
+    "status" TEXT,
+    "decision" TEXT,
+    "comments" TEXT,
+    "created_at" TEXT,
+    "completed_at" TEXT,
+    "signature_hash" TEXT,
+    PRIMARY KEY("tr_id"),
+    FOREIGN KEY("version_id") REFERENCES "version"("version_id"),
+    FOREIGN KEY("reviewer_id") REFERENCES "users"("user_id")
+);
+
 CREATE INDEX idx_audit_lookup ON "audit_log"("table_affected", "record_id");
 CREATE INDEX idx_doc_num ON "documents"("doc_num");
 CREATE INDEX idx_versions_doc ON "versions"("doc");
